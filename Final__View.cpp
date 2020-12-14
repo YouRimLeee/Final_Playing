@@ -73,7 +73,7 @@ void CFinalView::OnDraw(CDC* pDC)
 	if (!pDoc)
 		return;
 
-	CRect rt(0, 0, 300, 200);
+	CRect rt(100, 100, 300, 200);
 	pDC->DrawText(L"20162990 이유림 \n 기말고사 프로젝트", &rt, DT_CENTER | DT_VCENTER);
 	CRect rt2(400, 300, 1000, 600);
 	pDC->DrawText(L"어린이용 간단한 놀이 \n \n play 메뉴에서 원하는 작업을 누르세요", &rt2, DT_CENTER | DT_VCENTER);
@@ -85,10 +85,10 @@ void CFinalView::OnDraw(CDC* pDC)
 		CDC mdc;
 		mdc.CreateCompatibleDC(pDC);
 		//배경 숲
-		/*CRect message(200, 200, 600, 600);
-		pDC->DrawText(L"마우스를 한번 누르면 \n 나비가 날아다닙니다^^", &message, DT_CENTER | DT_VCENTER);*/
+		CRect message(50,0, 600, 200);
+		pDC->DrawText(L"마우스를 한번 누르면 나비가 날아다닙니다^^", &message, DT_CENTER | DT_VCENTER);
 		mdc.SelectObject(&forest);
-		pDC->BitBlt(0, 0, 1200, 700, &mdc, 0, 0, SRCCOPY);
+		pDC->BitBlt(0, 50, 1200, 700, &mdc, 0, 0, SRCCOPY);
 		CImage butterfly;
 		butterfly.Load(L"res/butterfly.png");
 		butterfly.Draw(*pDC, m_pt.x - 50, m_pt.y - 50);
@@ -99,42 +99,42 @@ void CFinalView::OnDraw(CDC* pDC)
 		forest.LoadBitmapW(IDB_BIT_FOREST);
 		CDC mdc;
 		mdc.CreateCompatibleDC(pDC);
-		//배경 숲
 		mdc.SelectObject(&forest);
-		pDC->BitBlt(0, 0, 1200, 700, &mdc, 0, 0, SRCCOPY);
+		pDC->BitBlt(0, 0, 1200, 700, &mdc, 0, 0, SRCCOPY);//배경 숲
 
 		CString filename;
 		CImage child;
-		
 		filename.Format(L"res/child(%d).png", m_index);
 		child.Load(filename);
 		child.Draw(*pDC, m_xPos, 200, 100, 200);
 	}
-		m_index = m_index + 1;
-		if (m_index == 7)
-			m_index = 1;
-
 
 		else if (m_kind == Move) {
 			CBitmap forest;
 			forest.LoadBitmapW(IDB_BIT_FOREST);
 			CDC mdc;
 			mdc.CreateCompatibleDC(pDC);
-			//배경 숲
 			mdc.SelectObject(&forest);
 			pDC->BitBlt(0 - count, 0, 1200, 700, &mdc, 0, 0, SRCCOPY);
 			pDC->BitBlt(1200 - count, 0, 1200, 700, &mdc, 0, 0, SRCCOPY);
+			//배경 숲이 이동하는 것처럼 보이게 만듦
 			CImage butterfly;
 			butterfly.Load(L"res/butterfly.png");
 			butterfly.Draw(*pDC, m_pt.x - 50, m_pt.y - 50);
-			CBitmap boy, * oldbit;
+			//나비가 날아다니는 모습
+			CString filename;
+			CImage child;
+			filename.Format(L"res/child(%d).png", m_index);
+			child.Load(filename);
+			child.Draw(*pDC, m_xPos, 200, 100, 200);
+			/*CBitmap boy, * oldbit;
 			boy.LoadBitmapW(IDB_BIT_CHILD);
 			CDC memdc;
 			memdc.CreateCompatibleDC(pDC);
 			memdc.SelectObject(&boy);
 			oldbit = memdc.SelectObject(&boy);
 			pDC->BitBlt(m_Child.x, m_Child.y, 100, 200, &memdc, m_count * 100, 0, SRCCOPY);
-			memdc.SelectObject(oldbit);
+			memdc.SelectObject(oldbit);*/
 		}
 	}
 	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
@@ -218,48 +218,50 @@ void CFinalView::OnTimer(UINT_PTR nIDEvent)
 		m_pt.y = m_pt.y + m_yStep;
 		if ((m_pt.x - 50) < 0 || (m_pt.x + 50) > 1200) //숲 배경에 맞춰서 돌아다니게 함.
 		{
-			m_pt.x = (m_xStep < 0) ? 50 : (1200 - 50);//m_pt.x - m_xStep;
+			m_pt.x = (m_xStep < 0) ? 50 : (1200 - 50);
 			m_pt.y = m_pt.y - m_yStep;
 			m_xStep = m_xStep * -1;
 		}
-		if ((m_pt.y - 50) < 0 || (m_pt.y + 50) > 700) // 윗쪽 벽 또는 아랫쪽 벽
+		if ((m_pt.y - 50) < 0 || (m_pt.y + 50) > 750) // 숲 배경에 맞춰서 돌아다니게 함.
 		{
 			m_pt.x = m_pt.x - m_xStep;
-			m_pt.y = (m_yStep < 0) ? 50 : 700 - 50;//m_pt.y - m_yStep;
+			m_pt.y = (m_yStep < 0) ? 50 : 750 - 50;
 			m_yStep = m_yStep * -1;
 		}
 		Invalidate();
 	}
 	else if (m_kind == Child) {//메뉴에서 Child 누르면 호출
-	
+
 		m_index = m_index + 1;
 		if (m_index == 7)
 			m_index = 1;
 		m_xPos = m_xPos + 10;
 		Invalidate();
 	}
-	else if (m_kind == Move) {//메뉴에서 Stay 누르면 호출
+	else if (m_kind == Move) {//메뉴에서 Move 누르면 호출
 		m_pt.x = m_pt.x + m_xStep;
 		m_pt.y = m_pt.y + m_yStep;
-		if ((m_pt.x - 50) < 0 || (m_pt.x + 50) > m_WinRight) //왼쪽벽 또는 오른쪽벽
+		if ((m_pt.x - 50) < 0 || (m_pt.x + 50) > m_WinRight)
 		{
-			m_pt.x = (m_xStep < 0) ? 50 : (m_WinRight - 50);//m_pt.x - m_xStep;
+			m_pt.x = (m_xStep < 0) ? 50 : (m_WinRight - 50);
 			m_pt.y = m_pt.y - m_yStep;
 			m_xStep = m_xStep * -1;
 		}
-		if ((m_pt.y - 50) < 0 || (m_pt.y + 50) > m_WinBottom) // 윗쪽 벽 또는 아랫쪽 벽
+		if ((m_pt.y - 50) < 0 || (m_pt.y + 50) > m_WinBottom)
 		{
 			m_pt.x = m_pt.x - m_xStep;
-			m_pt.y = (m_yStep < 0) ? 50 : (m_WinBottom - 50);//m_pt.y - m_yStep;
+			m_pt.y = (m_yStep < 0) ? 50 : (m_WinBottom - 50);
 			m_yStep = m_yStep * -1;
 		}
+		m_index = m_index + 1;
+		if (m_index == 7)
+			m_index = 1;
+		m_xPos = m_xPos + 10;
+		Invalidate();
 		m_count++;
 		if (m_count == 6)
 			m_count = 0;
-		m_Child.x += 20;
-		if (m_Child.x >= m_WinBottom)
-			m_Child.x = -600;
-		count = count + 20;
+		count = count + 30;
 		Invalidate();
 		if (count == 1200) {
 			count = 0;
