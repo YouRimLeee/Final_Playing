@@ -44,6 +44,21 @@ public:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnPlayButterfly();
+	afx_msg void OnPlayChild();
+	afx_msg void OnParkMove();
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	CPoint m_pt;
+	int m_xStep;
+	int m_yStep;
+	int m_WinRight;
+	int m_WinBottom;
+	int m_kind;
+	int m_count;
+	CPoint m_Child;
+	int count;
+	int m_index;
+	int m_xPos;
 };
 
 #ifndef _DEBUG  // Final__View.cpp의 디버그 버전

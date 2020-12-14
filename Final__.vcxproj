@@ -211,8 +211,10 @@
     <None Include="res\Final.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\child.bmp" />
     <Image Include="res\Final__.ico" />
     <Image Include="res\Final__Doc.ico" />
+    <Image Include="res\forest.bmp" />
     <Image Include="res\Toolbar.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

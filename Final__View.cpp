@@ -34,6 +34,10 @@ BEGIN_MESSAGE_MAP(CFinalView, CView)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_TIMER()
 	ON_WM_SIZE()
+	ON_COMMAND(ID_PLAY_BUTTERFLY, &CFinalView::OnPlayButterfly)
+	ON_COMMAND(ID_PLAY_CHILD, &CFinalView::OnPlayChild)
+	ON_COMMAND(ID_PARK_MOVE, &CFinalView::OnParkMove)
+	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 // CFinalView 생성/소멸
@@ -44,6 +48,8 @@ CFinalView::CFinalView() noexcept
 
 	m_kind = UNKNOWN;
 	count = 0;
+	m_index = 1;
+	m_xPos = 0;
 }
 
 CFinalView::~CFinalView()
@@ -70,7 +76,7 @@ void CFinalView::OnDraw(CDC* pDC)
 	CRect rt(0, 0, 300, 200);
 	pDC->DrawText(L"20162990 이유림 \n 기말고사 프로젝트", &rt, DT_CENTER | DT_VCENTER);
 	CRect rt2(400, 300, 1000, 600);
-	pDC->DrawText(L"어린이용 간단한 놀이 \n \n playin 메뉴에서 원하는 작업을 누르세요", &rt2, DT_CENTER | DT_VCENTER);
+	pDC->DrawText(L"어린이용 간단한 놀이 \n \n play 메뉴에서 원하는 작업을 누르세요", &rt2, DT_CENTER | DT_VCENTER);
 
 	if (m_kind == Butterfly) {
 
@@ -79,10 +85,10 @@ void CFinalView::OnDraw(CDC* pDC)
 		CDC mdc;
 		mdc.CreateCompatibleDC(pDC);
 		//배경 숲
-		CRect message(200, 200, 600, 600);
-		pDC->DrawText(L"마우스를 한번 누르면 \n 나비가 날아다닙니다^^", &message, DT_CENTER | DT_VCENTER);
+		/*CRect message(200, 200, 600, 600);
+		pDC->DrawText(L"마우스를 한번 누르면 \n 나비가 날아다닙니다^^", &message, DT_CENTER | DT_VCENTER);*/
 		mdc.SelectObject(&forest);
-		pDC->BitBlt(400, 400, 1200, 700, &mdc, 0, 0, SRCCOPY);
+		pDC->BitBlt(0, 0, 1200, 700, &mdc, 0, 0, SRCCOPY);
 		CImage butterfly;
 		butterfly.Load(L"res/butterfly.png");
 		butterfly.Draw(*pDC, m_pt.x - 50, m_pt.y - 50);
@@ -97,47 +103,42 @@ void CFinalView::OnDraw(CDC* pDC)
 		mdc.SelectObject(&forest);
 		pDC->BitBlt(0, 0, 1200, 700, &mdc, 0, 0, SRCCOPY);
 
-		/*CString filename;
+		CString filename;
 		CImage child;
-		filename.Format(L"res/child - %d.png", m_count);
+		
+		filename.Format(L"res/child(%d).png", m_index);
 		child.Load(filename);
-		child.Draw(*pDC, 100, 200);
-		m_count = m_count + 1;
-		if (m_count == 7)
-			m_count = 1;*/
-
-		CBitmap boy, * oldbit;
-		boy.LoadBitmapW(IDB_BIT_CHILD);
-		CDC memdc;
-		memdc.CreateCompatibleDC(pDC);
-		memdc.SelectObject(&boy);
-		oldbit = memdc.SelectObject(&boy);
-		pDC->BitBlt(m_Child.x, m_Child.y, 100, 200, &memdc, m_count * 100, 0, SRCCOPY);
-		memdc.SelectObject(oldbit);
+		child.Draw(*pDC, m_xPos, 200, 100, 200);
 	}
-	else if (m_kind == Move) {
-		CBitmap forest;
-		forest.LoadBitmapW(IDB_BIT_FOREST);
-		CDC mdc;
-		mdc.CreateCompatibleDC(pDC);
-		//배경 숲
-		mdc.SelectObject(&forest);
-		pDC->BitBlt(0 - count, 0, 1200, 700, &mdc, 0, 0, SRCCOPY);
-		pDC->BitBlt(1200 - count, 0, 1200, 700, &mdc, 0, 0, SRCCOPY);
-		CImage butterfly;
-		butterfly.Load(L"res/butterfly.png");
-		butterfly.Draw(*pDC, m_pt.x - 50, m_pt.y - 50);
-		CBitmap boy, * oldbit;
-		boy.LoadBitmapW(IDB_BIT_CHILD);
-		CDC memdc;
-		memdc.CreateCompatibleDC(pDC);
-		memdc.SelectObject(&boy);
-		oldbit = memdc.SelectObject(&boy);
-		pDC->BitBlt(m_Child.x, m_Child.y, 100, 200, &memdc, m_count * 100, 0, SRCCOPY);
-		memdc.SelectObject(oldbit);
+		m_index = m_index + 1;
+		if (m_index == 7)
+			m_index = 1;
+
+
+		else if (m_kind == Move) {
+			CBitmap forest;
+			forest.LoadBitmapW(IDB_BIT_FOREST);
+			CDC mdc;
+			mdc.CreateCompatibleDC(pDC);
+			//배경 숲
+			mdc.SelectObject(&forest);
+			pDC->BitBlt(0 - count, 0, 1200, 700, &mdc, 0, 0, SRCCOPY);
+			pDC->BitBlt(1200 - count, 0, 1200, 700, &mdc, 0, 0, SRCCOPY);
+			CImage butterfly;
+			butterfly.Load(L"res/butterfly.png");
+			butterfly.Draw(*pDC, m_pt.x - 50, m_pt.y - 50);
+			CBitmap boy, * oldbit;
+			boy.LoadBitmapW(IDB_BIT_CHILD);
+			CDC memdc;
+			memdc.CreateCompatibleDC(pDC);
+			memdc.SelectObject(&boy);
+			oldbit = memdc.SelectObject(&boy);
+			pDC->BitBlt(m_Child.x, m_Child.y, 100, 200, &memdc, m_count * 100, 0, SRCCOPY);
+			memdc.SelectObject(oldbit);
+		}
 	}
 	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
-}
+
 
 
 // CFinalView 인쇄
@@ -194,8 +195,7 @@ void CFinalView::OnLButtonDown(UINT nFlags, CPoint point)
 		m_yStep = (int)(point.y - m_pt.y) / 10;
 	}
 	else if (m_kind == Child) {
-		m_count = 0;
-		SetTimer(1, 100, NULL);
+		SetTimer(0, 100, NULL);
 	}
 	else if (m_kind == Move) {
 		SetTimer(1, 100, NULL);
@@ -231,12 +231,11 @@ void CFinalView::OnTimer(UINT_PTR nIDEvent)
 		Invalidate();
 	}
 	else if (m_kind == Child) {//메뉴에서 Child 누르면 호출
-		m_count++;
-		if (m_count == 6)
-			m_count = 0;
-		m_Child.x += 20;
-		if (m_Child.x >= m_WinBottom)
-			m_Child.x = -600;
+	
+		m_index = m_index + 1;
+		if (m_index == 7)
+			m_index = 1;
+		m_xPos = m_xPos + 10;
 		Invalidate();
 	}
 	else if (m_kind == Move) {//메뉴에서 Stay 누르면 호출
@@ -264,7 +263,7 @@ void CFinalView::OnTimer(UINT_PTR nIDEvent)
 		Invalidate();
 		if (count == 1200) {
 			count = 0;
-			Invalidate(0);
+			Invalidate();
 
 		}
 
@@ -278,4 +277,35 @@ void CFinalView::OnSize(UINT nType, int cx, int cy)
 	m_WinRight = cx;
 	m_WinBottom = cy;
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+}
+
+
+void CFinalView::OnPlayButterfly()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	m_kind = Butterfly;
+	Invalidate();
+}
+
+
+void CFinalView::OnPlayChild()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	m_kind = Child;
+	Invalidate();
+}
+
+
+void CFinalView::OnParkMove()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	m_kind = Move;
+}
+
+
+void CFinalView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	SetTimer(1, 100, NULL);
+	CView::OnKeyDown(nChar, nRepCnt, nFlags);
 }
