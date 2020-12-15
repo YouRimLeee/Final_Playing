@@ -21,6 +21,7 @@
 #define Butterfly 1
 #define Child 2
 #define Move 3 
+#define Puzzle 4
 
 // CFinalView
 
@@ -38,6 +39,7 @@ BEGIN_MESSAGE_MAP(CFinalView, CView)
 	ON_COMMAND(ID_PLAY_CHILD, &CFinalView::OnPlayChild)
 	ON_COMMAND(ID_PARK_MOVE, &CFinalView::OnParkMove)
 	ON_WM_KEYDOWN()
+	ON_COMMAND(ID_PLAY_PUZZLE, &CFinalView::OnPlayPuzzle)
 END_MESSAGE_MAP()
 
 // CFinalView 생성/소멸
@@ -133,6 +135,34 @@ void CFinalView::OnDraw(CDC* pDC)
 			child.Load(filename);
 			child.Draw(*pDC, m_xPos, 200, 100, 200);
 		}
+
+		else if (m_kind == Puzzle) {
+		CBitmap	pz;
+		pz.LoadBitmapW(IDB_BIT_FOREST);//그림크기 1200*700
+		CDC mDC;
+		mDC.CreateCompatibleDC(pDC);
+		mDC.SelectObject(&pz);
+		
+		int num[4], x, y;
+		for (int i = 0;i < 2;i++)
+		{
+			for (int j = 0;j < 3;j++)
+			{
+				num[count] = rand() % 4;//0,1,2,3
+				if (Exist(num, count))
+				{
+					j--;
+					continue;
+				}
+				x = num[count] / 2;//몫임 0,0,1,1
+				y = num[count] % 2;//나머지임 0,1,0,1
+				count++;
+				pDC->BitBlt(i*600, j*350, 600, 350, &mDC, x * 600, y * 350, SRCCOPY);
+
+			}
+		}
+		
+	}
 	}
 	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
 
@@ -301,10 +331,32 @@ void CFinalView::OnParkMove()//공원에서 아이가 뛰어다니고 나비가 
 	Invalidate();
 }
 
+void CFinalView::OnPlayPuzzle()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	m_kind = Puzzle;
+	Invalidate();
+}
 
 void CFinalView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	SetTimer(1, 100, NULL);
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+
+
+
+bool CFinalView::Exist(int num[], int count)
+{
+	// TODO: 여기에 구현 코드 추가.
+	for (int i = 0;i < count;i++)
+	{
+		if (num[count] == num[i])
+		{
+			return true;
+		}
+	}
+	return false;
 }

@@ -59,6 +59,8 @@ public:
 	int count;
 	int m_index;
 	int m_xPos;
+	afx_msg void OnPlayPuzzle();
+	bool Exist(int num[], int count);
 };
 
 #ifndef _DEBUG  // Final__View.cpp의 디버그 버전
