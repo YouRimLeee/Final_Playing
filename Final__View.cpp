@@ -137,16 +137,20 @@ void CFinalView::OnDraw(CDC* pDC)
 		}
 
 		else if (m_kind == Puzzle) {
+		CRect message(50, 0, 1500, 200);
+		pDC->DrawText(L"전의 메뉴에서 봤던 공원의 모습이 되려면 퍼즐을 몇 번 이동하면 될지 떠올려보세요^^\n 윈도우 창의 크기를 바꾸면 방향이 계속 변합니다.", &message, DT_CENTER | DT_VCENTER);
+
 		CBitmap	pz;
 		pz.LoadBitmapW(IDB_BIT_FOREST);//그림크기 1200*700
 		CDC mDC;
 		mDC.CreateCompatibleDC(pDC);
 		mDC.SelectObject(&pz);
 		
-		int num[4], x, y;
+		int num[4], x, y, count;
+		count = 0;
 		for (int i = 0;i < 2;i++)
 		{
-			for (int j = 0;j < 3;j++)
+			for (int j = 0;j < 2;j++)
 			{
 				num[count] = rand() % 4;//0,1,2,3
 				if (Exist(num, count))
@@ -157,7 +161,7 @@ void CFinalView::OnDraw(CDC* pDC)
 				x = num[count] / 2;//몫임 0,0,1,1
 				y = num[count] % 2;//나머지임 0,1,0,1
 				count++;
-				pDC->BitBlt(i*600, j*350, 600, 350, &mDC, x * 600, y * 350, SRCCOPY);
+				pDC->BitBlt(i*600, j*350+50, 600, 350, &mDC, x * 600, y * 350, SRCCOPY);
 
 			}
 		}
